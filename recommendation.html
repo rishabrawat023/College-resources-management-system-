@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommendation - Campus Resource Optimizer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <span class="brand">Campus Resource Optimizer</span>
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('resources_page') }}">Resources</a>
+            <a href="{{ url_for('bookings_page') }}">Bookings</a>
+            <a href="{{ url_for('recommendation_page') }}" class="active">Recommendation</a>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <h1>Find a suitable resource</h1>
+
+        <!-- Requirements form (GET request, handled by recommend_resource() in app.py) -->
+        <section class="card">
+            <form method="get" action="{{ url_for('recommendation_page') }}" class="form-grid">
+                <div class="field">
+                    <label for="students">Number of students</label>
+                    <input type="number" id="students" name="students" min="1" value="{{ form.get('students', '') }}" required>
+                </div>
+                <div class="field">
+                    <label for="resource_type">Resource type</label>
+                    <select id="resource_type" name="resource_type">
+                        <option value="">Any type</option>
+                        {% for t in resource_types %}
+                            <option value="{{ t }}" {% if form.get('resource_type') == t %}selected{% endif %}>{{ t }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="equipment">Required equipment (optional)</label>
+                    <input type="text" id="equipment" name="equipment" placeholder="Projector, AC" value="{{ form.get('equipment', '') }}">
+                </div>
+                <div class="field field-buttons">
+                    <button type="submit" class="btn">Find resource</button>
+                </div>
+            </form>
+        </section>
+
+        {% if error %}
+            <div class="alert alert-error">{{ error }}</div>
+        {% endif %}
+
+        {% if searched and not error %}
+            {% if best %}
+                <section class="card recommended">
+                    <h2>Recommended resource: {{ best.name }}</h2>
+                    <p>
+                        {{ best.resource_type }} &middot; Capacity {{ best.capacity }} &middot;
+                        {{ best.building }}, floor {{ best.floor }}
+                    </p>
+                    <p>Equipment: {{ best.equipment or 'None listed' }}</p>
+                    <p>Status: <span class="badge badge-{{ best.status|lower }}">{{ best.status }}</span></p>
+
+                    <h3>Why this resource</h3>
+                    <ul>
+                        {% for reason in best.reasons %}
+                            <li>{{ reason }}</li>
+                        {% endfor %}
+                    </ul>
+
+                    <a class="btn" href="{{ url_for('bookings_page', resource_id=best.resource_id, student_count=form.get('students', '')) }}">Book {{ best.name }}</a>
+                </section>
+
+                {% if others %}
+                <section class="card">
+                    <h2>Other suitable resources</h2>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th class="num">Capacity</th>
+                                    <th>Building</th>
+                                    <th>Equipment</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for r in others %}
+                                <tr>
+                                    <td><strong>{{ r.name }}</strong></td>
+                                    <td>{{ r.resource_type }}</td>
+                                    <td class="num">{{ r.capacity }}</td>
+                                    <td>{{ r.building }}</td>
+                                    <td>{{ r.equipment or '-' }}</td>
+                                    <td class="actions">
+                                        <a class="btn btn-small" href="{{ url_for('bookings_page', resource_id=r.resource_id, student_count=form.get('students', '')) }}">Book</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                {% endif %}
+            {% else %}
+                <div class="alert alert-error">
+                    No available resource matches these requirements.
+                    Try a smaller equipment list, a different type, or check the
+                    <a href="{{ url_for('resources_page') }}">resources page</a>.
+                </div>
+            {% endif %}
+        {% endif %}
+
+    </main>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

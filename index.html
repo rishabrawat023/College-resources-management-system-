@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Resource Optimizer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- Navigation bar (same on every page; change "active" to match the page) -->
+    <nav class="navbar">
+        <span class="brand">Campus Resource Optimizer</span>
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}" class="active">Home</a>
+            <a href="{{ url_for('resources_page') }}">Resources</a>
+            <a href="{{ url_for('bookings_page') }}">Bookings</a>
+            <a href="{{ url_for('recommendation_page') }}">Recommendation</a>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <section class="hero">
+            <h1>Campus Resource Optimizer</h1>
+            <p>
+                Manage classrooms, computer labs, seminar halls and auditoriums.
+                Check availability, book a room without double booking,
+                and get a suitable room for your group of students.
+            </p>
+        </section>
+
+        <!-- Statistics: these numbers are read from MySQL in app.py -->
+        <section class="stats">
+            <div class="card stat-card">
+                <h3>Total Resources</h3>
+                <p class="stat-number">{{ stats.total_resources }}</p>
+            </div>
+            <div class="card stat-card">
+                <h3>Available Resources</h3>
+                <p class="stat-number">{{ stats.available_resources }}</p>
+            </div>
+            <div class="card stat-card">
+                <h3>Booked Today</h3>
+                <p class="stat-number">{{ stats.booked_resources }}</p>
+            </div>
+            <div class="card stat-card">
+                <h3>Total Bookings</h3>
+                <p class="stat-number">{{ stats.total_bookings }}</p>
+            </div>
+        </section>
+
+        <section class="quick-actions">
+            <h2>Quick actions</h2>
+            <div class="button-row">
+                <a class="btn" href="{{ url_for('resources_page') }}#resource-form">Add a resource</a>
+                <a class="btn" href="{{ url_for('resources_page') }}">View resources</a>
+                <a class="btn" href="{{ url_for('bookings_page') }}">Book a resource</a>
+                <a class="btn btn-outline" href="{{ url_for('recommendation_page') }}">Find a suitable room</a>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

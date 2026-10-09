@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookings - Campus Resource Optimizer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <span class="brand">Campus Resource Optimizer</span>
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('resources_page') }}">Resources</a>
+            <a href="{{ url_for('bookings_page') }}" class="active">Bookings</a>
+            <a href="{{ url_for('recommendation_page') }}">Recommendation</a>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <!-- Success and conflict messages from app.py appear here -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <h1>Bookings</h1>
+
+        <!-- Booking form -->
+        <section class="card">
+            <h2>Book a resource</h2>
+            <form method="post" action="{{ url_for('bookings_page') }}" id="booking-form"
+                  data-check-url="{{ url_for('check_availability_route') }}" class="form-grid">
+                <div class="field">
+                    <label for="resource_id">Resource</label>
+                    <select id="resource_id" name="resource_id" required>
+                        <option value="">Choose a resource</option>
+                        {% for r in resources %}
+                            <option value="{{ r.resource_id }}" data-capacity="{{ r.capacity }}"
+                                    {% if form.get('resource_id') == r.resource_id|string %}selected{% endif %}>
+                                {{ r.name }} - {{ r.resource_type }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <small id="capacity-hint" class="muted"></small>
+                </div>
+                <div class="field">
+                    <label for="date">Date</label>
+                    <input type="date" id="date" name="date" min="{{ today }}" value="{{ form.get('date', today) }}" required>
+                </div>
+                <div class="field">
+                    <label for="start_time">Start time</label>
+                    <input type="time" id="start_time" name="start_time" value="{{ form.get('start_time', '') }}" required>
+                </div>
+                <div class="field">
+                    <label for="end_time">End time</label>
+                    <input type="time" id="end_time" name="end_time" value="{{ form.get('end_time', '') }}" required>
+                </div>
+                <div class="field">
+                    <label for="student_count">Number of students</label>
+                    <input type="number" id="student_count" name="student_count" min="1" value="{{ form.get('student_count', '') }}" required>
+                </div>
+                <div class="field">
+                    <label for="purpose">Purpose</label>
+                    <input type="text" id="purpose" name="purpose" maxlength="200" placeholder="Data Structures lecture" value="{{ form.get('purpose', '') }}" required>
+                </div>
+                <div class="field field-buttons">
+                    <button type="submit" class="btn">Book resource</button>
+                    <button type="button" class="btn btn-outline" id="check-button">Check availability</button>
+                </div>
+            </form>
+            <p id="availability-result" class="availability-result" role="status"></p>
+        </section>
+
+        <!-- Existing bookings -->
+        <section class="card">
+            <h2>Existing bookings</h2>
+            {% if bookings %}
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Resource</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th class="num">Students</th>
+                            <th>Purpose</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for b in bookings %}
+                        <tr>
+                            <td><strong>{{ b.resource_name }}</strong></td>
+                            <td>{{ b.date.strftime('%d %b %Y') }}</td>
+                            <td>{{ b.start_display }} - {{ b.end_display }}</td>
+                            <td class="num">{{ b.student_count }}</td>
+                            <td>{{ b.purpose }}</td>
+                            <td><span class="badge badge-{{ b.status|lower }}">{{ b.status }}</span></td>
+                            <td class="actions">
+                                {% if b.status == 'Confirmed' %}
+                                <form method="post" action="{{ url_for('booking_cancel', booking_id=b.booking_id) }}"
+                                      data-confirm="Cancel the booking for {{ b.resource_name }}?">
+                                    <button type="submit" class="btn btn-small btn-danger">Cancel</button>
+                                </form>
+                                {% else %}
+                                    <span class="muted">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                <p class="muted">There are no bookings yet. Use the form above to make the first one.</p>
+            {% endif %}
+        </section>
+
+        <!-- Waiting list (queue): requests that failed because of a conflict -->
+        {% if waiting_list %}
+        <section class="card">
+            <h2>Waiting list</h2>
+            <p class="muted">
+                These requests had a conflict. If the blocking booking is cancelled,
+                the first request in this list that fits is booked automatically.
+            </p>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="num">Position</th>
+                            <th>Resource</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th class="num">Students</th>
+                            <th>Purpose</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for w in waiting_list %}
+                        <tr>
+                            <td class="num">{{ loop.index }}</td>
+                            <td><strong>{{ w.resource_name }}</strong></td>
+                            <td>{{ w.date }}</td>
+                            <td>{{ w.start_time }} - {{ w.end_time }}</td>
+                            <td class="num">{{ w.student_count }}</td>
+                            <td>{{ w.purpose }}</td>
+                            <td class="actions">
+                                <form method="post" action="{{ url_for('waiting_remove', waiting_id=w.id) }}"
+                                      data-confirm="Remove this request from the waiting list?">
+                                    <button type="submit" class="btn btn-small btn-danger">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        {% endif %}
+
+    </main>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

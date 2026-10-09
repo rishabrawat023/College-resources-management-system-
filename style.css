@@ -1,0 +1,352 @@
+/* ============================================================
+   style.css - Campus Resource Optimizer
+   Colours: blue, white and light grey.
+   Change the colours in one place: the variables below.
+   ============================================================ */
+
+:root {
+    --blue: #1d4ed8;
+    --blue-dark: #1e3a8a;
+    --blue-light: #dbeafe;
+    --white: #ffffff;
+    --grey-bg: #f1f5f9;
+    --grey-border: #d5dce6;
+    --grey-text: #5b6676;
+    --text: #1f2937;
+    --green: #15803d;
+    --green-light: #dcfce7;
+    --red: #b91c1c;
+    --red-light: #fee2e2;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--grey-bg);
+    color: var(--text);
+    line-height: 1.5;
+}
+
+/* ---------- Navigation bar ---------- */
+.navbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 12px 24px;
+    background: var(--blue-dark);
+    color: var(--white);
+}
+
+.brand {
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.nav-links a {
+    padding: 6px 14px;
+    border-radius: 6px;
+    color: var(--white);
+    text-decoration: none;
+}
+
+.nav-links a:hover {
+    background: var(--blue);
+}
+
+.nav-links a.active {
+    background: var(--white);
+    color: var(--blue-dark);
+    font-weight: 600;
+}
+
+/* ---------- Page layout ---------- */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 16px 48px;
+}
+
+h1 {
+    margin: 0 0 16px;
+    color: var(--blue-dark);
+}
+
+h2 {
+    margin: 0 0 12px;
+    font-size: 1.15rem;
+    color: var(--blue-dark);
+}
+
+h3 {
+    margin: 0 0 8px;
+    font-size: 1rem;
+}
+
+.muted {
+    color: var(--grey-text);
+    font-weight: 400;
+}
+
+.hero {
+    margin-bottom: 24px;
+}
+
+.hero p {
+    max-width: 650px;
+    color: var(--grey-text);
+}
+
+/* ---------- Cards ---------- */
+.card {
+    background: var(--white);
+    border: 1px solid var(--grey-border);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.stats .card {
+    margin-bottom: 0;
+}
+
+.stat-card h3 {
+    margin: 0;
+    color: var(--grey-text);
+    font-weight: 600;
+}
+
+.stat-number {
+    margin: 4px 0 0;
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--blue);
+}
+
+.recommended {
+    border-left: 5px solid var(--blue);
+}
+
+.recommended p {
+    margin: 4px 0;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+    display: inline-block;
+    padding: 9px 18px;
+    border: 1px solid var(--blue);
+    border-radius: 6px;
+    background: var(--blue);
+    color: var(--white);
+    font-size: 0.95rem;
+    font-family: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: var(--blue-dark);
+    border-color: var(--blue-dark);
+}
+
+.btn-outline {
+    background: var(--white);
+    color: var(--blue);
+}
+
+.btn-outline:hover {
+    background: var(--blue-light);
+    color: var(--blue-dark);
+}
+
+.btn-small {
+    padding: 4px 12px;
+    font-size: 0.85rem;
+}
+
+.btn-danger {
+    background: var(--white);
+    border-color: var(--red);
+    color: var(--red);
+}
+
+.btn-danger:hover {
+    background: var(--red);
+    border-color: var(--red);
+    color: var(--white);
+}
+
+.button-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* ---------- Forms ---------- */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    align-items: end;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.field label {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--grey-border);
+    border-radius: 6px;
+    background: var(--white);
+    color: var(--text);
+    font-size: 0.95rem;
+    font-family: inherit;
+}
+
+.field-buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* Visible keyboard focus */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 3px solid var(--blue);
+    outline-offset: 2px;
+}
+
+/* ---------- Tables ---------- */
+.table-wrap {
+    overflow-x: auto;      /* wide tables scroll on small screens */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.93rem;
+}
+
+th,
+td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--grey-border);
+    text-align: left;
+    vertical-align: middle;
+}
+
+th {
+    background: var(--grey-bg);
+    color: var(--blue-dark);
+    white-space: nowrap;
+}
+
+.num {
+    text-align: right;
+}
+
+.actions {
+    display: flex;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.actions form {
+    margin: 0;
+}
+
+/* ---------- Badges and messages ---------- */
+.badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.badge-available,
+.badge-confirmed {
+    background: var(--green-light);
+    color: var(--green);
+}
+
+.badge-maintenance,
+.badge-cancelled {
+    background: var(--grey-bg);
+    color: var(--grey-text);
+}
+
+.alert {
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    border-radius: 6px;
+    border: 1px solid;
+}
+
+.alert-success {
+    background: var(--green-light);
+    border-color: var(--green);
+    color: var(--green);
+}
+
+.alert-error {
+    background: var(--red-light);
+    border-color: var(--red);
+    color: var(--red);
+}
+
+.availability-result {
+    min-height: 1.4em;
+    margin: 12px 0 0;
+    font-weight: 600;
+}
+
+.availability-result.ok {
+    color: var(--green);
+}
+
+.availability-result.bad {
+    color: var(--red);
+}
+
+/* ---------- Small screens ---------- */
+@media (max-width: 600px) {
+    .navbar {
+        padding: 12px 16px;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+    }
+}

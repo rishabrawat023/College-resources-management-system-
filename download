@@ -1,0 +1,6 @@
+# Keep your real password and local files out of GitHub
+.env
+venv/
+__pycache__/
+*.pyc
+.vscode/

@@ -1,0 +1,7 @@
+Flask>=3.0
+mysql-connector-python>=8.0
+python-dotenv>=1.0
+
+# Optional - only needed for ml/prediction.py (the website works without them):
+# pandas
+# scikit-learn
