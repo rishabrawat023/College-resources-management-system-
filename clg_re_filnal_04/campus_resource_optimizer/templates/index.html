@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Resource Optimizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">C</div><div><strong>Campus<span>Flow</span></strong><small>RESOURCE OPTIMIZER</small></div></div>
+    <div class="nav-label">WORKSPACE</div>
+    <button class="nav-item active" data-view="overview"><span>▦</span> Overview</button>
+    <button class="nav-item" data-view="resources"><span>▤</span> Resources</button>
+    <button class="nav-item" data-view="bookings"><span>▣</span> Bookings</button>
+    <button class="nav-item" data-view="waiting"><span>◷</span> Waiting list</button>
+    <div class="sidebar-bottom"><div class="help-card"><div class="help-icon">✦</div><b>Smarter campus,<br>better learning.</b><p>Manage every shared space in one place.</p></div><small>SMART CAMPUS MANAGEMENT · v1.0</small></div>
+  </aside>
+  <main class="main">
+    <header class="topbar"><div><div class="eyebrow">CAMPUS RESOURCE MANAGEMENT</div><h1 id="pageTitle">Overview</h1></div><div class="top-actions"><span class="today" id="todayLabel"></span><div class="avatar">AD</div></div></header>
+    <div id="toast" class="toast"></div>
+    <section class="view active" id="overviewView">
+      <div class="welcome"><div><div class="eyebrow light">YOUR CAMPUS AT A GLANCE</div><h2>Make every space count.</h2><p>Monitor facilities, manage bookings and keep campus operations moving.</p></div><div class="welcome-art">⌂</div></div>
+      <div class="stats-grid">
+        <article class="stat-card"><div class="stat-top"><span>Total resources</span><i>▤</i></div><strong id="statResources">—</strong><small>Spaces registered</small></article>
+        <article class="stat-card"><div class="stat-top"><span>Active bookings</span><i>▣</i></div><strong id="statBookings">—</strong><small>Confirmed reservations</small></article>
+        <article class="stat-card"><div class="stat-top"><span>Waiting list</span><i>◷</i></div><strong id="statWaiting">—</strong><small>Requests in FIFO order</small></article>
+        <article class="stat-card"><div class="stat-top"><span>Available spaces</span><i>✓</i></div><strong id="statAvailable">—</strong><small>Not currently booked</small></article>
+      </div>
+      <div class="section-heading"><div><h3>Resource distribution</h3><p>Facilities by category</p></div><button class="text-btn" data-go="resources">View all resources →</button></div>
+      <div class="distribution-grid" id="distribution"></div>
+      <div class="section-heading"><div><h3>Recent bookings</h3><p>Latest confirmed reservations</p></div><button class="text-btn" data-go="bookings">Manage bookings →</button></div>
+      <div class="panel table-panel"><div class="table-wrap"><table><thead><tr><th>RESOURCE</th><th>BOOKED BY</th><th>DATE</th><th>TIME</th><th>PURPOSE</th></tr></thead><tbody id="recentRows"></tbody></table></div></div>
+    </section>
+    <section class="view" id="resourcesView">
+      <div class="section-heading page-section"><div><h3>Campus resources</h3><p>Add, update, search and organize your facilities.</p></div><button class="primary-btn" id="addResourceBtn">＋ Add resource</button></div>
+      <div class="toolbar"><div class="search-box">⌕ <input id="resourceSearch" placeholder="Search by name, ID or location..."></div><select id="typeFilter"><option value="">All resource types</option><option>Classroom</option><option>Computer Lab</option><option>Seminar Hall</option><option>Auditorium</option></select><select id="sortFilter"><option value="name">Sort: Name</option><option value="capacity">Sort: Capacity</option></select></div>
+      <div class="resource-grid" id="resourceGrid"></div>
+    </section>
+    <section class="view" id="bookingsView">
+      <div class="section-heading page-section"><div><h3>Booking management</h3><p>Reserve campus spaces and prevent schedule conflicts.</p></div><button class="primary-btn" id="newBookingBtn">＋ New booking</button></div>
+      <div class="panel"><div class="panel-title"><div><b>Confirmed bookings</b><small>Manage scheduled resource reservations</small></div><span class="soft-pill" id="bookingCount">0 bookings</span></div><div class="table-wrap"><table><thead><tr><th>RESOURCE</th><th>BOOKED BY</th><th>DATE</th><th>TIME</th><th>PURPOSE</th><th></th></tr></thead><tbody id="bookingRows"></tbody></table></div></div>
+    </section>
+    <section class="view" id="waitingView">
+      <div class="section-heading page-section"><div><h3>FIFO waiting list</h3><p>Requests are handled in the order they were received.</p></div><span class="soft-pill" id="waitingCount">0 requests</span></div>
+      <div class="info-banner"><span>ⓘ</span><div><b>First in, first out</b><p>When a booking is cancelled, the first eligible request for that resource and time slot is automatically confirmed.</p></div></div>
+      <div class="panel"><div class="table-wrap"><table><thead><tr><th>QUEUE</th><th>RESOURCE</th><th>REQUESTED BY</th><th>DATE</th><th>TIME</th><th>PURPOSE</th><th></th></tr></thead><tbody id="waitingRows"></tbody></table></div></div>
+    </section>
+  </main>
+</div>
+
+<div class="modal-backdrop" id="resourceModal"><div class="modal"><div class="modal-head"><div><div class="eyebrow">FACILITY DETAILS</div><h3 id="resourceModalTitle">Add resource</h3></div><button class="close-btn" data-close="resourceModal">×</button></div>
+<form id="resourceForm"><input type="hidden" id="resourceId"><div class="form-grid">
+<label class="full">Resource name<input id="rName" required placeholder="e.g. A-Block Room 101"></label>
+<label>Resource type<select id="rType" required><option>Classroom</option><option>Computer Lab</option><option>Seminar Hall</option><option>Auditorium</option></select></label>
+<label>Capacity<input id="rCapacity" type="number" min="1" required placeholder="60"></label>
+<label class="full">Location<input id="rLocation" required placeholder="Building, floor or campus area"></label>
+<label>Number of PCs<input id="rPcs" type="number" min="0" value="0"></label>
+<div class="checks"><label><input id="rSmartboard" type="checkbox"> Smartboard</label><label><input id="rProjector" type="checkbox" checked> Projector</label><label><input id="rAc" type="checkbox"> AC available</label></div>
+</div><div class="modal-actions"><button type="button" class="secondary-btn" data-close="resourceModal">Cancel</button><button class="primary-btn">Save resource</button></div></form></div></div>
+
+<div class="modal-backdrop" id="bookingModal"><div class="modal"><div class="modal-head"><div><div class="eyebrow">RESERVATION DETAILS</div><h3>New booking</h3></div><button class="close-btn" data-close="bookingModal">×</button></div>
+<form id="bookingForm"><div class="form-grid">
+<label class="full">Select resource<select id="bResource" required></select></label>
+<label>Booked by<input id="bName" required placeholder="Your name / department"></label><label>Purpose<input id="bPurpose" required placeholder="Lecture, workshop..."></label>
+<label>Date<input id="bDate" type="date" required></label><label>Start time<input id="bStart" type="time" required></label><label class="full">End time<input id="bEnd" type="time" required></label>
+</div><p class="form-note">If the selected time overlaps an existing booking, your request will be added to the FIFO waiting list.</p><div class="modal-actions"><button type="button" class="secondary-btn" data-close="bookingModal">Cancel</button><button class="primary-btn">Submit booking</button></div></form></div></div>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body></html>
