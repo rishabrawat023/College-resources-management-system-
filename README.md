@@ -1,149 +1,136 @@
-# Campus Resource Optimizer
+# Campus Resource Optimizer – Smart College Resource Management System
 
-## Description
+A responsive Flask web application for managing college spaces, bookings and a FIFO waiting list. It uses **HTML, CSS, JavaScript and Python Flask**. All persistent data is stored in `database.json`; no MySQL or machine learning is used.
 
-A simple web application for a college to manage classrooms, computer labs, seminar halls and auditoriums.
+## Features
 
-It helps you to:
+- Dashboard statistics and resource distribution
+- CRUD operations for Classrooms, Computer Labs, Seminar Halls and Auditoriums
+- Resource fields: capacity, location, smartboard, projector, number of PCs and AC
+- Linear-search resource filtering and sorting
+- Dictionary/hash-table lookup of resources by ID
+- Booking creation with date/time overlap detection
+- Booking cancellation and automatic promotion of the first eligible FIFO waiting-list request
+- Remove a waiting-list request
+- JSON persistence across application restarts
+- Responsive desktop and mobile interface
+- Input validation and user-friendly error messages
 
-- add, view, edit and delete campus resources
-- search resources by type, capacity, building and availability
-- book a resource and prevent double booking
-- get a recommendation for the most suitable room for a group of students
-
-Workflow: **Add Resources → View/Search Resources → Check Availability → Book Resource → Detect Conflicts → Recommend Suitable Resource**
-
-## Technologies
+## Project structure
 
 ```text
-Python
-Flask
-MySQL
-HTML
-CSS
-JavaScript
+campus_resource_optimizer/
+├── app.py
+├── database.json              # created automatically on first run
+├── requirements.txt
+├── README.md
+├── templates/
+│   └── index.html
+└── static/
+    ├── css/
+    │   └── style.css
+    └── js/
+        └── app.js
 ```
 
-## Installation
+## Requirements
 
-Open the project folder in VS Code, open the terminal (Terminal → New Terminal) and run:
+- Python 3.9 or newer
+- Visual Studio Code
+- Python extension for VS Code (recommended)
+- A modern browser
 
-```bash
-python -m venv venv
-```
+## Run in VS Code (Windows)
 
-Activate the virtual environment on Windows:
+1. Extract the project ZIP file.
+2. Open VS Code.
+3. Select **File → Open Folder** and choose `campus_resource_optimizer`.
+4. Open the integrated terminal: **Terminal → New Terminal**.
+5. Create a virtual environment:
 
-```bash
-venv\Scripts\activate
-```
-
-(On Mac/Linux use `source venv/bin/activate`.)
-
-Install the requirements:
-
-```bash
-pip install -r requirements.txt
-```
-
-## MySQL Setup
-
-1. Open **MySQL Workbench** and connect to your local MySQL server.
-2. Open the file `database/schema.sql` (File → Open SQL Script).
-3. Run the whole script with the lightning bolt button. It creates the `campus_optimizer` database, both tables, sample resources and sample bookings.
-   (Running it again deletes all data and restores the sample data.)
-4. Create your `.env` file by copying `.env.example`:
-
-   ```bash
-   copy .env.example .env
+   ```powershell
+   py -m venv .venv
    ```
 
-   (On Mac/Linux: `cp .env.example .env`.) Then open `.env` and write your real MySQL password:
+6. Activate it:
 
-   ```text
-   DB_HOST=localhost
-   DB_USER=root
-   DB_PASSWORD=your_password
-   DB_NAME=campus_optimizer
+   ```powershell
+   .\.venv\Scripts\Activate.ps1
    ```
 
-Never share your `.env` file. It is listed in `.gitignore`, so GitHub will not receive it.
+   If PowerShell blocks activation, run this once in that terminal and activate again:
 
-## Run Project
+   ```powershell
+   Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+   .\.venv\Scripts\Activate.ps1
+   ```
+
+7. Install Flask:
+
+   ```powershell
+   py -m pip install -r requirements.txt
+   ```
+
+8. Start the application:
+
+   ```powershell
+   py app.py
+   ```
+
+9. Open this address in your browser:
+
+   `http://127.0.0.1:5000`
+
+## Run on macOS / Linux
 
 ```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
 python app.py
 ```
 
-Then open:
+Then visit `http://127.0.0.1:5000`.
 
-```text
-http://127.0.0.1:5000
-```
+## First run and sample data
 
-## Try the conflict detection
+On the first launch, `database.json` is created automatically with five sample resources. You can add, edit or delete resources from the Resources page. Bookings and waiting-list entries are written to the same JSON file immediately after each successful operation.
 
-The sample data has a booking for **A-101 today from 10:00 AM to 11:00 AM**.
+To restore the original sample data, stop the server, delete `database.json`, and restart `python app.py`. **This permanently removes your current saved records.**
 
-1. Go to **Bookings**.
-2. Choose A-101, today's date, 10:30 to 11:30, 40 students, any purpose.
-3. Click **Book resource**. You will see the booking conflict message and the request is placed on the waiting list.
-4. Cancel the 10:00 booking. The waiting request is booked automatically.
+## DSA concepts used
 
-Try 11:00 to 12:00 instead: it is accepted, because it starts exactly when the other booking ends.
+| Concept | Where it is used |
+|---|---|
+| Linear Search | `/api/resources` scans resource records for matching text and type |
+| Sorting | Resource list sorted by name or capacity; bookings sorted by date/time |
+| Dictionary / Hash Table | `resource_index()` builds an ID-to-resource dictionary for average O(1) lookup |
+| Queue (FIFO) | Waiting requests append at the end; promotion scans insertion order and confirms the first eligible request |
 
-## Folder Structure
+## Booking conflict logic
 
-```text
-campus-resource-optimizer/
-├── app.py                   Main Flask file: web pages (routes), booking logic, search, sort, queue, recommendation
-├── database.py              Connects to MySQL and holds every SQL query
-├── requirements.txt         Python packages to install
-├── README.md                This file
-├── .env.example             Template for your database settings (copy it to .env)
-├── .gitignore               Tells Git to ignore .env, venv and cache files
-│
-├── database/
-│   └── schema.sql           Creates the database, tables, sample resources and sample bookings
-│
-├── templates/               HTML pages (Flask fills in the data)
-│   ├── index.html           Home / dashboard
-│   ├── resources.html       Resource list, search, add, edit, delete
-│   ├── bookings.html        Booking form, existing bookings, waiting list
-│   └── recommendation.html  Recommendation form and results
-│
-├── static/
-│   ├── style.css            Colours and layout (blue, white, light grey)
-│   └── script.js            Small helpers: confirm messages, time check, "Check availability" button
-│
-└── ml/
-    └── prediction.py        Optional placeholder for future demand prediction (not used by the website)
-```
+Two bookings conflict when they refer to the same resource and date and their time intervals overlap. Adjacent bookings are allowed (for example, 10:00–11:00 and 11:00–12:00). End time must be later than start time.
 
-## Where the DSA is used
+A conflicting request is retained in the waiting list. When a booking is cancelled, the app checks waiting requests for that resource in FIFO order and promotes the first request whose requested slot is now free.
 
-| Concept | Where | What it does |
-| --- | --- | --- |
-| Searching | `search_resources()` in `app.py` | Goes through all resources and keeps the ones that match the filters |
-| Sorting | `sort_resources()` in `app.py` | Sorts by name, capacity or availability using `sorted()` |
-| Dictionary (hash table) | `build_resource_dict()` in `app.py` | Finds a resource by its ID instantly |
-| Queue | `waiting_queue` in `app.py` | First come, first served waiting list for bookings that had a conflict |
+## API overview
 
-## GitHub
+| Method | Endpoint | Purpose |
+|---|---|---|
+| GET | `/api/dashboard` | Dashboard statistics |
+| GET | `/api/resources` | List/search/sort resources |
+| POST | `/api/resources` | Add resource |
+| PUT | `/api/resources/<id>` | Edit resource |
+| DELETE | `/api/resources/<id>` | Delete resource |
+| GET | `/api/bookings` | List bookings |
+| POST | `/api/bookings` | Create booking or queue request |
+| DELETE | `/api/bookings/<id>` | Cancel booking and promote eligible waiter |
+| GET | `/api/waiting-list` | View FIFO queue |
+| DELETE | `/api/waiting-list/<id>` | Remove a waiting request |
 
-Install Git first, create an empty repository on GitHub, then run:
+## Important notes
 
-```bash
-git init
-git add .
-git commit -m "Initial project"
-git branch -M main
-git remote add origin YOUR_GITHUB_REPOSITORY_URL
-git push -u origin main
-```
-
-## Common problems
-
-- **"Database error" page**: MySQL is not running, the password in `.env` is wrong, or `schema.sql` has not been run yet.
-- **`ModuleNotFoundError`**: the virtual environment is not active. Run `venv\Scripts\activate` and `pip install -r requirements.txt` again.
-- **Port already in use**: close the other program using port 5000, or change `app.run(debug=True)` to `app.run(debug=True, port=5001)` in `app.py`.
+- This is a local academic/demo application, not a production multi-user service.
+- Flask's development server is used. For deployment, use a production WSGI server and disable debug mode.
+- JSON file writes are protected by an in-process lock and use a temporary file followed by an atomic replacement. For multiple server processes or concurrent deployments, use a transactional database.
+- No authentication is included in this starter application. Do not expose it publicly with sensitive institutional data.
