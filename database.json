@@ -1,0 +1,129 @@
+{
+  "resources": [
+    {
+      "id": "R001",
+      "name": "A-Block Room 101",
+      "type": "Classroom",
+      "capacity": 60,
+      "location": "A Block, First Floor",
+      "smartboard": true,
+      "projector": true,
+      "pcs": 0,
+      "ac": true
+    },
+    {
+      "id": "R002",
+      "name": "Computer Lab 1",
+      "type": "Computer Lab",
+      "capacity": 40,
+      "location": "IT Block, Ground Floor",
+      "smartboard": false,
+      "projector": true,
+      "pcs": 40,
+      "ac": true
+    },
+    {
+      "id": "R003",
+      "name": "Seminar Hall",
+      "type": "Seminar Hall",
+      "capacity": 120,
+      "location": "Admin Block, Second Floor",
+      "smartboard": true,
+      "projector": true,
+      "pcs": 0,
+      "ac": true
+    },
+    {
+      "id": "R004",
+      "name": "Main Auditorium",
+      "type": "Auditorium",
+      "capacity": 350,
+      "location": "Central Campus",
+      "smartboard": false,
+      "projector": true,
+      "pcs": 0,
+      "ac": true
+    },
+    {
+      "id": "R005",
+      "name": "B-Block Room 204",
+      "type": "Classroom",
+      "capacity": 45,
+      "location": "B Block, Second Floor",
+      "smartboard": false,
+      "projector": true,
+      "pcs": 0,
+      "ac": false
+    },
+    {
+      "id": "RF38045F",
+      "name": "CR-01",
+      "type": "Classroom",
+      "capacity": 80,
+      "location": "CSIT",
+      "smartboard": true,
+      "projector": true,
+      "pcs": 0,
+      "ac": false
+    },
+    {
+      "id": "RBBA88A6",
+      "name": "CR-04",
+      "type": "Classroom",
+      "capacity": 60,
+      "location": "CSIT",
+      "smartboard": true,
+      "projector": true,
+      "pcs": 0,
+      "ac": false
+    }
+  ],
+
+
+
+
+
+
+
+  "bookings": [
+    {
+      "id": "BFBF44B0",
+      "resource_id": "R001",
+      "resource_name": "A-Block Room 101",
+      "booked_by": "renu",
+      "purpose": "lecture",
+      "date": "2026-11-10",
+      "start_time": "14:03",
+      "end_time": "15:03"
+    },
+    {
+      "id": "B9A7D2C6",
+      "resource_id": "R001",
+      "resource_name": "A-Block Room 101",
+      "booked_by": "sonu",
+      "purpose": "lecture",
+      "date": "2026-11-09",
+      "start_time": "14:09",
+      "end_time": "15:09"
+    }
+  ],
+
+
+
+  
+
+
+  "waiting_list": [
+    {
+      "id": "B6128869",
+      "resource_id": "R001",
+      "resource_name": "A-Block Room 101",
+      "booked_by": "nobita",
+      "purpose": "lecture",
+      "date": "2026-11-09",
+      "start_time": "14:09",
+      "end_time": "15:09",
+      "requested_at": "2026-11-09T14:10:04"
+    }
+  ]
+}
